@@ -229,6 +229,180 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/14/第四节：认识网络/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zoukba">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZouKba">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/11/14/第四节：认识网络/" itemprop="url">未命名</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-14T21:41:49+08:00">
+                2018-11-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="第四节：认识网络"><a href="#第四节：认识网络" class="headerlink" title="第四节：认识网络"></a>第四节：认识网络</h1><h2 id="画出osi和tcp-ip模型"><a href="#画出osi和tcp-ip模型" class="headerlink" title="画出osi和tcp/ip模型"></a>画出osi和tcp/ip模型</h2><h3 id="OSI"><a href="#OSI" class="headerlink" title="OSI"></a>OSI</h3><ul>
+<li>物理层：EIA/TIA RS-232、EIA/TIA RS-449、V.35、RJ-45</li>
+<li>数据链路层：SDLC、HDLC、PPP、STP</li>
+<li>网络层：IP、IPX、ICMP、RIP、OSPF</li>
+<li>传输层：TCP、UDP、SPX</li>
+<li>会话层：Socket、NFS、SQL、RPC 、X-WINDOWS、ASP、SCP</li>
+<li>表示层：PNG、JPEG、GIF、PICT、ASCII、EBCDIC、MIDI、MPEG、MP4</li>
+<li>应用层：TELNET、FTP、TFTP、SMTP、SNMP、HTTP、BOOTP、DHCP、DNS</li>
+</ul>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-1c98d1f8b08c3303.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="1.jpg"></p>
+<h3 id="TCP-IP"><a href="#TCP-IP" class="headerlink" title="TCP/IP"></a>TCP/IP</h3><ul>
+<li>链路层：ARP、RARP</li>
+<li>网络层：IP、ICMP、IGMP</li>
+<li>传输层：TCP、UDP</li>
+<li>应用层：FTP、HTTP、DNS、SMTP</li>
+</ul>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-2d81558f39a3176f.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="2.jpg"></p>
+<h3 id="理解两种协议"><a href="#理解两种协议" class="headerlink" title="理解两种协议"></a>理解两种协议</h3><ul>
+<li><p>在四层协议中，将七层中的物理层和数据链路层合在了一起。会话层，表示层，应用层和为应用层。</p>
+</li>
+<li><p>封装过程<br> <img src="https://upload-images.jianshu.io/upload_images/11457450-c369dfdc3409752a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="3.png"></p>
+</li>
+<li><p>解封过程<br><img src="https://upload-images.jianshu.io/upload_images/11457450-d3d4a9c36ce8de99.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="4.png"></p>
+</li>
+</ul>
+<h2 id="json漏洞挖掘"><a href="#json漏洞挖掘" class="headerlink" title="json漏洞挖掘"></a>json漏洞挖掘</h2><ul>
+<li>代码编写将找出的url放在src处</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE html&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">"utf-8"</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">title</span>&gt;</span><span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="undefined"></span></span><br><span class="line"><span class="undefined">			function foo(data) &#123;</span></span><br><span class="line"><span class="undefined">				alert(JSON.stringify(data));</span></span><br><span class="line"><span class="undefined">			&#125;</span></span><br><span class="line"><span class="undefined">		</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"http://mobileservice.kugou.com/api/v3/special/song?specialid=98131&amp;plat=0&amp;version=8000&amp;pagesize=122&amp;format=jsonp&amp;callback=foo"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>善于利用搜索引擎<ul>
+<li>百度/谷歌/bing….</li>
+</ul>
+</li>
+<li>搜索语句<ul>
+<li>inurl:?callback=</li>
+<li>inurl:&amp;callback=</li>
+</ul>
+</li>
+</ul>
+<h2 id="json理解与防御"><a href="#json理解与防御" class="headerlink" title="json理解与防御"></a>json理解与防御</h2><ul>
+<li><p>json漏洞还是需要诱导用户去点击,通过伪造请求向服务端去发送请求,再通过被害者传输到攻击者服务端,类似于csrf<br>可用漏洞较少，漏洞条件较为苛刻.</p>
+</li>
+<li><p>json漏洞</p>
+<ol>
+<li>受攻击网站URL返回一个json对象或者数组</li>
+<li>受攻击网站地址支持get请求</li>
+<li>受害者游览了钓鱼/恶意的网站，且在受害者游览器中的cookie值没有清除</li>
+</ol>
+</li>
+<li><p>json漏洞的防御</p>
+<p>防御要从两方面着手，一是网站方面必须做好防御机制，二是用户也需要提高警惕。</p>
+<p>敏感和重要数据的请求入口一定要设置身份验证，而且最好限制只能POST请求。</p>
+</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/12/第三节：学习JavaScript/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -713,7 +887,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-count">4</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
