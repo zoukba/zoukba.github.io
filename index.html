@@ -229,6 +229,176 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/04/第十一节：Jboss学习/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zoukba">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZouKba">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/12/04/第十一节：Jboss学习/" itemprop="url">未命名</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-04T23:03:57+08:00">
+                2018-12-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="Jboss学习"><a href="#Jboss学习" class="headerlink" title="Jboss学习"></a>Jboss学习</h2><h3 id="复现CVE-2017-7504"><a href="#复现CVE-2017-7504" class="headerlink" title="复现CVE-2017-7504"></a>复现CVE-2017-7504</h3><ol>
+<li><p>存在与4.x版本中</p>
+</li>
+<li><p>判断漏洞是否存在</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-d576b0b78c0276b3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="9.png"></p>
+</li>
+<li><p>判断版本，开启监听</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-490341c891f542dc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="10.png"></p>
+</li>
+<li><p>代码执行</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-e9c55888f8581573.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="11.png"></p>
+</li>
+</ol>
+<h3 id="复现CVE-2017-12149"><a href="#复现CVE-2017-12149" class="headerlink" title="复现CVE-2017-12149"></a>复现CVE-2017-12149</h3><ul>
+<li><p>受影响5.x，6.x</p>
+</li>
+<li><p>判断版本</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-855735d05aa293c6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="5.png"></p>
+</li>
+<li><p>开启监听</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-eb1943ccfcdcccf7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="6.png"></p>
+</li>
+<li><p>代码执行</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-a88ea9dbf2e9137e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="7.png"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-3eaf8122d68c2fa6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="8.png"></p>
+</li>
+</ul>
+<h3 id="复现CVE-2015-7501"><a href="#复现CVE-2015-7501" class="headerlink" title="复现CVE-2015-7501"></a>复现CVE-2015-7501</h3><ul>
+<li><p>此漏洞主要是由于JBoss中invoker/JMXInvokerServlet路径对外开放，由于JBoss的jmx组件支持Java反序列化，并且在反序列化过程中没有加入有效的安全检测机制，导致攻击者可以传入精心构造好的恶意序列化数据，在jmx对其进行反序列化处理时，导致传入的携带恶意代码的序列化数据执行，造成反序列化漏洞，下面是传入的序列化结构。</p>
+<p>此漏洞的payload和weblogic Java反序列化CVE-2015-4852原理相同，都是利用了Apache Commons Collections的基础库进行Java反序列化漏洞的利用。</p>
+</li>
+</ul>
+<p>  首先我们进入到/invoker/JMXInvokerServlet路径下，post传入我们构造好的payload，下面的序列化POC需要将16进制解码。</p>
+<p>  在上面的POC中，cmd是我们想要执行的代码，这里大家注意一下，binascii.b2a_hex(cmd)前面的两位（标红的部分）是代表cmd转换为16进制的长度。所以需要根据我们具体传入的代码而进行调整。</p>
+<p>  这个漏洞的修补方法很简单，因为ysoserial工具生成的payload都依赖于InvokerTransformer类。如果用户在正常业务中不使用此类，可以将此类移除，方法为使用Winzip打开jar文件，在org/apache/commons/collections/functors/InvokerTransformer.class删除该文件。</p>
+<p>  <img src="https://upload-images.jianshu.io/upload_images/11457450-45500af4c9cc6925.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="12.png"></p>
+<p>  <img src="https://upload-images.jianshu.io/upload_images/11457450-a2f9acc0a20ed4b6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="13.png"></p>
+<h3 id="复现CVE-2013-4810"><a href="#复现CVE-2013-4810" class="headerlink" title="复现CVE-2013-4810"></a>复现CVE-2013-4810</h3><ul>
+<li><p>此漏洞和CVE-2015-7501漏洞原理相同，这里详细介绍一下两者的区别，其区别就在于两个漏洞选择的进行其中JMXInvokerServlet和EJBInvokerServlet利用的是org.jboss.invocation.MarshalledValue进行的反序列化操作，而web-console/Invoker利用的是org.jboss.console.remote.RemoteMBeanInvocation进行反序列化并上传构造的文件。</p>
+<p>首先我们进入到/invoker/JMXInvokerServlet，/invoker/EJBInvokerServlet路径下，post传入我们构造好的payload，并在头部传入。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-1d8891125dda7e48.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="14.png"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-a97f849313dca930.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="15.png"></p>
+<h3 id="使用msf监听的方法"><a href="#使用msf监听的方法" class="headerlink" title="使用msf监听的方法"></a>使用msf监听的方法</h3><p><img src="https://upload-images.jianshu.io/upload_images/11457450-e04db55e95996078.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="16.png"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-5e447f6616faa877.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="17.png"></p>
+</li>
+</ul>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><ul>
+<li><p><strong>Your time is limited, so don’t waste it living someone else’s life.</strong></p>
+<p>你的时间有限，所以不要浪费时间去过别人的生活。</p>
+</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/04/第十节：Tomcat安全/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -2371,165 +2541,13 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/08/第一节：搭建环境/">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="zoukba">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ZouKba">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/11/08/第一节：搭建环境/" itemprop="url">未命名</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-08T13:47:41+08:00">
-                2018-11-08
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="第一节：搭建环境"><a href="#第一节：搭建环境" class="headerlink" title="第一节：搭建环境"></a>第一节：搭建环境</h1><h2 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h2><ul>
-<li>win7 iso</li>
-<li>win2003 iso</li>
-<li>kali linux</li>
-<li>wooyun</li>
-</ul>
-<h2 id="软件包准备"><a href="#软件包准备" class="headerlink" title="软件包准备"></a>软件包准备</h2><ul>
-<li>phpstudy</li>
-<li>java jdk</li>
-<li>python 2.x/3.x</li>
-<li>waterfox/firefox</li>
-</ul>
-<h2 id="搭建环境"><a href="#搭建环境" class="headerlink" title="搭建环境"></a>搭建环境</h2><ol>
-<li>win7</li>
-</ol>
-<ul>
-<li><p>从网上找到适合win7的密匙</p>
-<p> <img src="https://upload-images.jianshu.io/upload_images/11457450-cd7f5927d093d7f3.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="1.PNG"></p>
-</li>
-<li>傻瓜式的默认就好了<br><img src="https://upload-images.jianshu.io/upload_images/11457450-06860de79c0205e3.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="2.PNG"></li>
-<li>将软件包拷贝到win7虚拟机中<br><img src="https://upload-images.jianshu.io/upload_images/11457450-a896d2298f527c52.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="3.PNG"></li>
-<li>如图就是火狐游览器<br><img src="https://upload-images.jianshu.io/upload_images/11457450-52e8396c4efd9061.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="4.PNG"></li>
-<li>在安装PHP study的时候显示缺少一个vc9，那么我们就找一个给他装上<br><img src="https://upload-images.jianshu.io/upload_images/11457450-d81acca72ae3d3d8.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="7.PNG"></li>
-</ul>
-<ol start="2">
-<li>安装wooyun</li>
-</ol>
-<ul>
-<li>将下载下来的压缩文件解压，并直接从虚拟机导入<br><img src="https://upload-images.jianshu.io/upload_images/11457450-94cce7721d45cc6c.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="5.PNG"></li>
-<li>导入重启后获取他的ip地址<br><img src="https://upload-images.jianshu.io/upload_images/11457450-12323b25fb079953.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="6.PNG"></li>
-<li>耐心等待。。。。<br><img src="https://upload-images.jianshu.io/upload_images/11457450-3315ad0580a0a9eb.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="8.PNG"></li>
-<li>根据步骤去重新设置一下<br><img src="https://upload-images.jianshu.io/upload_images/11457450-3d96f27009101341.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="10.PNG"></li>
-<li>完美打开<br><img src="https://upload-images.jianshu.io/upload_images/11457450-978126d447c80577.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="9.PNG"></li>
-</ul>
-<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><ul>
-<li>在任何的学习开始之前都是枯燥的。忍耐，坚持之后才能看到通往彼岸的船。</li>
-</ul>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
+  <nav class="pagination">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
+  </nav>
+
 
 
           </div>
@@ -2573,7 +2591,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-count">11</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
