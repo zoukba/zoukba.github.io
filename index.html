@@ -229,7 +229,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/04/第十二节：weblogic学习/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/09/python爬虫/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="zoukba">
@@ -248,7 +248,295 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/12/04/第十二节：weblogic学习/" itemprop="url">未命名</a></h1>
+                <a class="post-title-link" href="/2018/12/09/python爬虫/" itemprop="url">未命名</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-09T21:34:25+08:00">
+                2018-12-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="python爬虫"><a href="#python爬虫" class="headerlink" title="python爬虫"></a>python爬虫</h2><h3 id="使用多线程和re写爬虫"><a href="#使用多线程和re写爬虫" class="headerlink" title="使用多线程和re写爬虫"></a>使用多线程和re写爬虫</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">import re</span><br><span class="line">import requests</span><br><span class="line">import threading</span><br><span class="line">#构造爬虫</span><br><span class="line">def spider(page):</span><br><span class="line">    #获取url</span><br><span class="line">    url = &apos;https://www.qiushibaike.com/hot/page/%s/&apos; %str(page)</span><br><span class="line">    #游览器的user-agent</span><br><span class="line">    header = &#123;&apos;User-agent&apos;: &apos;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Safari/537.36&apos;&#125;</span><br><span class="line">    #构造request</span><br><span class="line">    request1 = requests.Request(url,headers=header)</span><br><span class="line">    #request相应</span><br><span class="line">    response = requests.get(url,headers=header)</span><br><span class="line">    #将相应变成文本格式</span><br><span class="line">    html = response.text</span><br><span class="line">    #编写正则表达式</span><br><span class="line">    pattern = re.compile(&apos;&lt;div class=&quot;content&quot;&gt;(.*?)&lt;/div&gt;&apos;,re.S)</span><br><span class="line">    #利用正则，写入content_list表</span><br><span class="line">    content_list = pattern.findall(html)</span><br><span class="line">    #做一些调整</span><br><span class="line">    for s in content_list:</span><br><span class="line">        #替换掉没有过滤的符号</span><br><span class="line">        s = s.replace(&apos;&lt;span&gt;&apos;,&quot;&quot;).replace(&apos;&lt;/span&gt;&apos;,&quot;&quot;).replace(&apos;/n&apos;,&quot;&quot;).replace(&apos;br/&apos;,&quot;&quot;).replace(&apos;&lt;&gt;&apos;,&quot;&quot;).replace(&apos;&lt;span class=&quot;contentForAll&quot;&gt;&apos;,&quot;&quot;)</span><br><span class="line">        #写入文档</span><br><span class="line">        with open(&apos;test.txt&apos;,&apos;a+&apos;,encoding=&apos;utf-8&apos;) as f:</span><br><span class="line">            f.write(s.strip())</span><br><span class="line">            f.write(&apos;\n&apos;)</span><br><span class="line">if __name__ == &apos;__main__&apos;:</span><br><span class="line">    print(&apos;请输入起始页：&apos;)</span><br><span class="line">    a = int(input())</span><br><span class="line">    print(&apos;请输入结束页：&apos;)</span><br><span class="line">    b = int(input())</span><br><span class="line">    c = b-a+1</span><br><span class="line">    #构建一个多线程，先创建一个thread数列</span><br><span class="line">    thread = []</span><br><span class="line">    for page in range(a,b+1):</span><br><span class="line">        #target调用函数，args调用的变量</span><br><span class="line">        t=threading.Thread(target=spider,</span><br><span class="line">                           args=(page,))</span><br><span class="line">        #加入线程</span><br><span class="line">        thread.append(t)</span><br><span class="line">    #开始线程</span><br><span class="line">    for i in range(0,c):</span><br><span class="line">        thread[i].start()</span><br><span class="line">    #是主线程阻塞</span><br><span class="line">    for i in range(0,c):</span><br><span class="line">        thread[i].join()</span><br></pre></td></tr></table></figure>
+<h3 id="编写shadan空间搜索器"><a href="#编写shadan空间搜索器" class="headerlink" title="编写shadan空间搜索器"></a>编写shadan空间搜索器</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">#!/usr/bin/python</span><br><span class="line"># -*- coding: utf-8 -*-</span><br><span class="line"></span><br><span class="line">#使用shodan所需要的库</span><br><span class="line">import shodan</span><br><span class="line">import sys</span><br><span class="line">#使用表单所需要的库</span><br><span class="line">import xlwt</span><br><span class="line">import time</span><br><span class="line"></span><br><span class="line">def scanner():</span><br><span class="line">    try:</span><br><span class="line">        #获取运行python文件的时候命令行参数</span><br><span class="line">        results = api.search(sys.argv[1:])</span><br><span class="line">        #打开一个工作表</span><br><span class="line">        book = xlwt.Workbook(encoding=&apos;utf-8&apos;,style_compression=0)</span><br><span class="line">        #创建一个表单</span><br><span class="line">        sheet = book.add_sheet(&apos;sheet&apos;)</span><br><span class="line">        #设置一下计数变量</span><br><span class="line">        i =0</span><br><span class="line">        #从其返回的数据中，排列并写入数据</span><br><span class="line">        for result in results[&apos;matches&apos;]:</span><br><span class="line">                #i代表的是行，0，1，2代表的是列，后边反别是其对应的参数</span><br><span class="line">                sheet.write(i,0,str(result[&apos;location&apos;][&apos;country_name&apos;]))</span><br><span class="line">                sheet.write(i,1,str(result[&apos;ip_str&apos;]))</span><br><span class="line">                sheet.write(i,2,str(result[&apos;port&apos;]))</span><br><span class="line">                i+=1</span><br><span class="line">        #从工作表中导出并保存在‘shadon.xls’中</span><br><span class="line">        book.save(&apos;shadon.xls&apos;.format(sys.argv[1][0],time.strftime(&apos;%Y-%m-%d %H:%M:%S&apos;, localtime)))</span><br><span class="line">    except shodan.APIError, e:</span><br><span class="line">        print &apos;Error: &#123;&#125;&apos;.format(e)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">if __name__ == &apos;__main__&apos;:</span><br><span class="line">    API_KEY = &apos;xxxxxxxxxxxxxxxxxxxxxxxxxxx&apos;</span><br><span class="line">    api = shodan.Shodan(API_KEY)</span><br><span class="line">    localtime = time.localtime(time.time())</span><br><span class="line">    if len(sys.argv) == 1:</span><br><span class="line">        print &apos;Usage:%s &lt;search query&gt; &apos; % sys.argv[0]</span><br><span class="line">        sys.exit(1)</span><br><span class="line">    else:</span><br><span class="line">        scanner()</span><br></pre></td></tr></table></figure>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-9f41bb054dafb4d9.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="捕获.PNG"></p>
+<h3 id="熟悉正则"><a href="#熟悉正则" class="headerlink" title="熟悉正则"></a>熟悉正则</h3><ul>
+<li><a href="http://www.runoob.com/python/python-reg-expressions.html" target="_blank" rel="noopener">http://www.runoob.com/python/python-reg-expressions.html</a></li>
+</ul>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><ul>
+<li><p><strong>Life comes with many challenges. The ones that should not scare us are ones we can take on and take control of.</strong></p>
+<p>生活充满了挑战，唯有勇敢面对并自我掌控，我们才能克服恐惧。</p>
+</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/09/学习socket构造通信/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zoukba">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZouKba">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/12/09/学习socket构造通信/" itemprop="url">未命名</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-09T19:10:51+08:00">
+                2018-12-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="python引用"><a href="#python引用" class="headerlink" title="python引用"></a>python引用</h2><h3 id="1"><a href="#1" class="headerlink" title="1"></a>1</h3><p><img src="https://upload-images.jianshu.io/upload_images/11457450-cdc9eb21b7992aea.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="1.PNG"></p>
+<h3 id="2"><a href="#2" class="headerlink" title="2"></a>2</h3><p><img src="https://upload-images.jianshu.io/upload_images/11457450-fad7a321ce1061a3.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="2-1.PNG"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-7879dafd279b368c.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="2-2.PNG"></p>
+<h3 id="3"><a href="#3" class="headerlink" title="3"></a>3</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">#引用socket库</span><br><span class="line">import socket</span><br><span class="line">#创建socket套接字</span><br><span class="line">udpSocker = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)</span><br><span class="line">#服务器的IP地址</span><br><span class="line">sendAddr = (&apos;192.168.182.132&apos;,6666)</span><br><span class="line">#发送数据</span><br><span class="line">print(&quot;输入要发送的数据&quot;)</span><br><span class="line">sendData = input()</span><br><span class="line">#发送数据包构造</span><br><span class="line">findlly_data = bytes(sendData,encoding=&quot;utf-8&quot;)</span><br><span class="line">#发送</span><br><span class="line">udpSocker.sendto(findlly_data,sendAddr)</span><br><span class="line">#关闭</span><br><span class="line">udpSocker.close()</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">from socket import *</span><br><span class="line">udpSocket = socket(AF_INET,SOCK_DGRAM)</span><br><span class="line">sendAddr = (&quot;192.168.182.132&quot;,6666)</span><br><span class="line">sendData = input(&quot;请输入要发送的数据：&quot;)</span><br><span class="line">findlly_data = bytes(sendData,encoding=&quot;utf-8&quot;)</span><br><span class="line">udpSocket.sendto(findlly_data,sendAddr)</span><br><span class="line">#开启接受最大数据为1024</span><br><span class="line">recvData = udpSocket.recvfrom(1024)</span><br><span class="line">print(recvData)</span><br></pre></td></tr></table></figure>
+<h3 id="4"><a href="#4" class="headerlink" title="4"></a>4</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">from socket import *</span><br><span class="line">socketServer = socket(AF_INET,SOCK_STREAM)</span><br><span class="line">address = (&apos;&apos;,8888)</span><br><span class="line">socketServer.bind(address)</span><br><span class="line">socketServer.listen(5)</span><br><span class="line">clientSocket,addr = socketServer.accept()</span><br><span class="line">#使其保持通信</span><br><span class="line">while True:</span><br><span class="line">    recvMsg = clientSocket.recv(1024)</span><br><span class="line">    strDate = recvMsg.decode(&quot;utf-8&quot;)</span><br><span class="line">    if strDate==&apos;q&apos;:</span><br><span class="line">        break</span><br><span class="line">    else:</span><br><span class="line">        print(&quot;收到:&quot;+strDate)</span><br><span class="line">        msg = input(&quot;回复:&quot;)</span><br><span class="line">        clientSocket.send(msg.encode(&quot;utf-8&quot;))</span><br><span class="line">socketServer.close()</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">from socket import *</span><br><span class="line">clientSocket = socket(AF_INET,SOCK_STREAM)</span><br><span class="line">address=(&apos;192.168.182.131&apos;,8888)</span><br><span class="line">clientSocket.connect(address)</span><br><span class="line">#使其保持通信</span><br><span class="line">while True:</span><br><span class="line">    sendMsg = input(&quot;请输入：&quot;)</span><br><span class="line">    if sendMsg == &apos;q&apos;:</span><br><span class="line">        break</span><br><span class="line">    else:</span><br><span class="line">        clientSocket.send(sendMsg.encode(&quot;utf-8&quot;))</span><br><span class="line">        msg = clientSocket.recv(1024)</span><br><span class="line">        print(msg.decode(&quot;utf-8&quot;))</span><br><span class="line">clientSocket.close()</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th>s.recvfrom(bufsize[.flag])</th>
+<th>接受UDP套接字的数据。与recv()类似，但返回值是（data,address）。其中data是包含接收数据的字符串，address是发送数据的套接字地址。</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>s.accept()</th>
+<th>接受TCP连接并返回（conn,address）,其中conn是新的套接字对象，可以用来接收和发送数据。address是连接客户端的地址。</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="5"><a href="#5" class="headerlink" title="5"></a>5</h3><p><a href="http://docs.python-requests.org/zh_CN/latest/user/quickstart.html" target="_blank" rel="noopener">http://docs.python-requests.org/zh_CN/latest/user/quickstart.html</a></p>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><ul>
+<li><p><strong>Sloth, like rust, consumes faster than labor wear. </strong></p>
+<p>懒惰像生锈一样，比操劳更能消耗身体。</p>
+</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/04/weblogic学习/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zoukba">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZouKba">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/12/04/weblogic学习/" itemprop="url">未命名</a></h1>
         
 
         <div class="post-meta">
@@ -446,7 +734,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/04/第十一节：Jboss学习/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/04/Jboss学习/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="zoukba">
@@ -465,7 +753,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/12/04/第十一节：Jboss学习/" itemprop="url">未命名</a></h1>
+                <a class="post-title-link" href="/2018/12/04/Jboss学习/" itemprop="url">未命名</a></h1>
         
 
         <div class="post-meta">
@@ -616,7 +904,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/04/第十节：Tomcat安全/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/04/Tomcat安全/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="zoukba">
@@ -635,7 +923,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/12/04/第十节：Tomcat安全/" itemprop="url">未命名</a></h1>
+                <a class="post-title-link" href="/2018/12/04/Tomcat安全/" itemprop="url">未命名</a></h1>
         
 
         <div class="post-meta">
@@ -839,7 +1127,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/04/第九节：学习iis系统/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/04/学习iis系统/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="zoukba">
@@ -858,7 +1146,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/12/04/第九节：学习iis系统/" itemprop="url">未命名</a></h1>
+                <a class="post-title-link" href="/2018/12/04/学习iis系统/" itemprop="url">未命名</a></h1>
         
 
         <div class="post-meta">
@@ -1121,7 +1409,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/04/第八节：注入实战/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/04/注入实战/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="zoukba">
@@ -1140,7 +1428,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/12/04/第八节：注入实战/" itemprop="url">未命名</a></h1>
+                <a class="post-title-link" href="/2018/12/04/注入实战/" itemprop="url">未命名</a></h1>
         
 
         <div class="post-meta">
@@ -1456,7 +1744,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/04/第七节：学习mssql/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/04/学习mssql/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="zoukba">
@@ -1475,7 +1763,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/12/04/第七节：学习mssql/" itemprop="url">未命名</a></h1>
+                <a class="post-title-link" href="/2018/12/04/学习mssql/" itemprop="url">未命名</a></h1>
         
 
         <div class="post-meta">
@@ -1720,7 +2008,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/19/第六节：ORACLE数据库注入及防御/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/19/ORACLE数据库注入及防御/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="zoukba">
@@ -1739,7 +2027,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/11/19/第六节：ORACLE数据库注入及防御/" itemprop="url">未命名</a></h1>
+                <a class="post-title-link" href="/2018/11/19/ORACLE数据库注入及防御/" itemprop="url">未命名</a></h1>
         
 
         <div class="post-meta">
@@ -1972,7 +2260,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/17/第五节：mysql学习/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/17/mysql学习/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="zoukba">
@@ -1991,7 +2279,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/11/17/第五节：mysql学习/" itemprop="url">未命名</a></h1>
+                <a class="post-title-link" href="/2018/11/17/mysql学习/" itemprop="url">未命名</a></h1>
         
 
         <div class="post-meta">
@@ -2289,327 +2577,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/14/第四节：认识网络/">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="zoukba">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ZouKba">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/11/14/第四节：认识网络/" itemprop="url">未命名</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-14T21:41:49+08:00">
-                2018-11-14
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="第四节：认识网络"><a href="#第四节：认识网络" class="headerlink" title="第四节：认识网络"></a>第四节：认识网络</h1><h2 id="画出osi和tcp-ip模型"><a href="#画出osi和tcp-ip模型" class="headerlink" title="画出osi和tcp/ip模型"></a>画出osi和tcp/ip模型</h2><h3 id="OSI"><a href="#OSI" class="headerlink" title="OSI"></a>OSI</h3><ul>
-<li>物理层：EIA/TIA RS-232、EIA/TIA RS-449、V.35、RJ-45</li>
-<li>数据链路层：SDLC、HDLC、PPP、STP</li>
-<li>网络层：IP、IPX、ICMP、RIP、OSPF</li>
-<li>传输层：TCP、UDP、SPX</li>
-<li>会话层：Socket、NFS、SQL、RPC 、X-WINDOWS、ASP、SCP</li>
-<li>表示层：PNG、JPEG、GIF、PICT、ASCII、EBCDIC、MIDI、MPEG、MP4</li>
-<li>应用层：TELNET、FTP、TFTP、SMTP、SNMP、HTTP、BOOTP、DHCP、DNS</li>
-</ul>
-<p><img src="https://upload-images.jianshu.io/upload_images/11457450-1c98d1f8b08c3303.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="1.jpg"></p>
-<h3 id="TCP-IP"><a href="#TCP-IP" class="headerlink" title="TCP/IP"></a>TCP/IP</h3><ul>
-<li>链路层：ARP、RARP</li>
-<li>网络层：IP、ICMP、IGMP</li>
-<li>传输层：TCP、UDP</li>
-<li>应用层：FTP、HTTP、DNS、SMTP</li>
-</ul>
-<p><img src="https://upload-images.jianshu.io/upload_images/11457450-2d81558f39a3176f.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="2.jpg"></p>
-<h3 id="理解两种协议"><a href="#理解两种协议" class="headerlink" title="理解两种协议"></a>理解两种协议</h3><ul>
-<li><p>在四层协议中，将七层中的物理层和数据链路层合在了一起。会话层，表示层，应用层和为应用层。</p>
-</li>
-<li><p>封装过程<br> <img src="https://upload-images.jianshu.io/upload_images/11457450-c369dfdc3409752a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="3.png"></p>
-</li>
-<li><p>解封过程<br><img src="https://upload-images.jianshu.io/upload_images/11457450-d3d4a9c36ce8de99.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="4.png"></p>
-</li>
-</ul>
-<h2 id="json漏洞挖掘"><a href="#json漏洞挖掘" class="headerlink" title="json漏洞挖掘"></a>json漏洞挖掘</h2><ul>
-<li>代码编写将找出的url放在src处</li>
-</ul>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE html&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">"utf-8"</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">title</span>&gt;</span><span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="undefined"></span></span><br><span class="line"><span class="undefined">			function foo(data) &#123;</span></span><br><span class="line"><span class="undefined">				alert(JSON.stringify(data));</span></span><br><span class="line"><span class="undefined">			&#125;</span></span><br><span class="line"><span class="undefined">		</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"http://mobileservice.kugou.com/api/v3/special/song?specialid=98131&amp;plat=0&amp;version=8000&amp;pagesize=122&amp;format=jsonp&amp;callback=foo"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>善于利用搜索引擎<ul>
-<li>百度/谷歌/bing….</li>
-</ul>
-</li>
-<li>搜索语句<ul>
-<li>inurl:?callback=</li>
-<li>inurl:&amp;callback=</li>
-</ul>
-</li>
-</ul>
-<h2 id="json理解与防御"><a href="#json理解与防御" class="headerlink" title="json理解与防御"></a>json理解与防御</h2><ul>
-<li><p>json漏洞还是需要诱导用户去点击,通过伪造请求向服务端去发送请求,再通过被害者传输到攻击者服务端,类似于csrf<br>可用漏洞较少，漏洞条件较为苛刻.</p>
-</li>
-<li><p>json漏洞</p>
-<ol>
-<li>受攻击网站URL返回一个json对象或者数组</li>
-<li>受攻击网站地址支持get请求</li>
-<li>受害者游览了钓鱼/恶意的网站，且在受害者游览器中的cookie值没有清除</li>
-</ol>
-</li>
-<li><p>json漏洞的防御</p>
-<p>防御要从两方面着手，一是网站方面必须做好防御机制，二是用户也需要提高警惕。</p>
-<p>敏感和重要数据的请求入口一定要设置身份验证，而且最好限制只能POST请求。</p>
-</li>
-</ul>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/12/第三节：学习JavaScript/">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="zoukba">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ZouKba">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/11/12/第三节：学习JavaScript/" itemprop="url">未命名</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-12T22:14:44+08:00">
-                2018-11-12
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="第三节：学习JavaScript"><a href="#第三节：学习JavaScript" class="headerlink" title="第三节：学习JavaScript"></a>第三节：学习JavaScript</h1><ol>
-<li><h2 id="编写一个自己的主页"><a href="#编写一个自己的主页" class="headerlink" title="编写一个自己的主页"></a>编写一个自己的主页</h2></li>
-<li><h2 id="编写邮箱验证"><a href="#编写邮箱验证" class="headerlink" title="编写邮箱验证"></a>编写邮箱验证</h2><ul>
-<li><p><strong>JavaScript</strong>，通常缩写为<strong>JS</strong>，是一种<a href="https://zh.wikipedia.org/wiki/%E9%AB%98%E7%BA%A7%E8%AF%AD%E8%A8%80" target="_blank" rel="noopener">高级</a>的，<a href="https://zh.wikipedia.org/wiki/%E7%9B%B4%E8%AD%AF%E8%AA%9E%E8%A8%80" target="_blank" rel="noopener">解释执行</a>的<a href="https://zh.wikipedia.org/wiki/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80" target="_blank" rel="noopener">编程语言</a><a href="https://zh.wikipedia.org/wiki/JavaScript#cite_note-:0-5" target="_blank" rel="noopener">[5]</a>。JavaScript是一门基于原型、函数先行的语言<a href="https://zh.wikipedia.org/wiki/JavaScript#cite_note-:1-6" target="_blank" rel="noopener">[6]</a>，是一门多范式的语言，它支持<a href="https://zh.wikipedia.org/wiki/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1" target="_blank" rel="noopener">面向对象</a>编程，<a href="https://zh.wikipedia.org/wiki/%E5%91%BD%E4%BB%A4%E5%BC%8F%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80" target="_blank" rel="noopener">命令式编程</a>，以及<a href="https://zh.wikipedia.org/wiki/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80" target="_blank" rel="noopener">函数式编程</a>。</p>
-</li>
-<li><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">function //创建定义一个函数</span><br><span class="line">var      //定义一个变量</span><br><span class="line">RegExp() //正则表达书</span><br><span class="line">document.getElementById()  //返回指定id的第一个变量引用</span><br><span class="line">document //对象使我们可以从脚本中对 HTML 页面中的所有元素进行访问</span><br><span class="line">alert()  //弹窗</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>邮箱验证代码</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE html&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">"utf-8"</span> /&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">title</span>&gt;</span>邮箱验证<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">id</span>=<span class="string">"email"</span>&gt;</span></span><br><span class="line">			邮箱</span><br><span class="line">		<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">div</span> <span class="attr">style</span>=<span class="string">"text-align: center;"</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"button"</span> <span class="attr">value</span>=<span class="string">"验证"</span> <span class="attr">onclick</span>=<span class="string">"check()"</span> /&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="undefined"></span></span><br><span class="line"><span class="undefined">			function check()&#123;</span></span><br><span class="line"><span class="undefined">				var a = new RegExp("^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.)&#123;1,63&#125;[a-z0-9]+$");</span></span><br><span class="line"><span class="undefined">				var b = document.getElementById("email");</span></span><br><span class="line"><span class="undefined">				if(b.value =="")</span></span><br><span class="line"><span class="undefined">				&#123;</span></span><br><span class="line"><span class="undefined">					alert("请输入邮箱");</span></span><br><span class="line"><span class="undefined">				&#125;</span></span><br><span class="line"><span class="undefined">				else if(!a.test(b.value))</span></span><br><span class="line"><span class="undefined">				&#123;</span></span><br><span class="line"><span class="undefined">					alert("假的");</span></span><br><span class="line"><span class="undefined">				&#125;</span></span><br><span class="line"><span class="undefined">				else</span></span><br><span class="line"><span class="undefined">				&#123;</span></span><br><span class="line"><span class="undefined">					alert("真的");</span></span><br><span class="line"><span class="undefined">				&#125;</span></span><br><span class="line"><span class="undefined">			&#125;</span></span><br><span class="line"><span class="undefined">		</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>项目展示</p>
-</li>
-</ul>
-</li>
-<li><h2 id="CSRF自动提交表单"><a href="#CSRF自动提交表单" class="headerlink" title="CSRF自动提交表单"></a>CSRF自动提交表单</h2><ul>
-<li><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;form&gt;   //用于为用户输入创建 HTML 表单</span><br><span class="line">&lt;form method=&quot;&quot;&gt;  //用于发送 form-data 的 HTTP 方法(get post)</span><br><span class="line">&lt;form enctype=&quot;&quot;&gt; //规定在发送表单数据之前如何对其进行编码</span><br><span class="line">&lt;form action=&quot;&quot;&gt;  //规定当提交表单时向何处发送表单数据</span><br><span class="line">&lt;input type=&quot;submit&quot;&gt;  //对象代表 HTML 表单中的一个提交按钮</span><br><span class="line">submit()          //把表单数据提交到 Web 服务器</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>代码演示</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE html&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">"utf-8"</span> /&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">title</span>&gt;</span><span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">""</span> <span class="attr">method</span>=<span class="string">"post"</span> <span class="attr">enctype</span>=<span class="string">"application/x-www-form-urlencoded"</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">label</span>&gt;</span>账号<span class="tag">&lt;/<span class="name">label</span>&gt;</span><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">value</span>=<span class="string">"xxx"</span> <span class="attr">name</span>=<span class="string">"username"</span> /&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">label</span>&gt;</span>密码<span class="tag">&lt;/<span class="name">label</span>&gt;</span><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"password"</span> <span class="attr">value</span>=<span class="string">"xxx"</span> <span class="attr">name</span>=<span class="string">"password"</span> /&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"submit"</span> <span class="attr">name</span>=<span class="string">"xxx"</span> <span class="attr">id</span>=<span class="string">"sub"</span> <span class="attr">value</span>=<span class="string">"提交"</span> /&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="undefined"></span></span><br><span class="line"><span class="undefined">			document.forms[0].submit();</span></span><br><span class="line"><span class="undefined">		</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>项目展示</p>
-</li>
-</ul>
-</li>
-<li><h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>Sloth, like rust, consumes faster than labor wear.</p>
-<p>懒惰像生锈一样，比操劳更能消耗身体</p>
-</li>
-</ol>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2660,7 +2627,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-count">14</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
