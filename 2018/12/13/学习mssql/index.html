@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="第七节：学习mssqlmssql显示注入 判断是否存在注入点  URL: http://219.153.49.228:40864/new_list.asp?id=2     存在注入点，并且可能是个数字型    判断数据库类型   是一个mssql数据库   确定字段数    由此判断存在4个字段   证明方式  采用联合注入   判断回显位置   原来是个字符型，并且在2，3位置回显   获取数">
+<meta property="og:type" content="article">
+<meta property="og:title" content="学习mssql">
+<meta property="og:url" content="http://yoursite.com/2018/12/13/学习mssql/index.html">
+<meta property="og:site_name" content="ZouKba">
+<meta property="og:description" content="第七节：学习mssqlmssql显示注入 判断是否存在注入点  URL: http://219.153.49.228:40864/new_list.asp?id=2     存在注入点，并且可能是个数字型    判断数据库类型   是一个mssql数据库   确定字段数    由此判断存在4个字段   证明方式  采用联合注入   判断回显位置   原来是个字符型，并且在2，3位置回显   获取数">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-0a1cf02bc92845a4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-1dc67488a92bd9a2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-6ec442480dec238d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-755d22dd29f71d86.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-d969f0e337a6cc59.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-05bd2c2a8ab82c76.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-c55c05995b37d5f7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-b2276c8962055f3c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-71616753efda2239.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-3cfb1728c22f62d9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-c40c518e2df3b20e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-57d313fab433ce46.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-dd137bafa8380f41.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-7d9a1c44d8956320.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-aec7d765408ac2d2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-a55f63a61efa2ca2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-62de5d75272ff79e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-48652419a03477b2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-b34305b7ce57e6bf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-934060f4698812ef.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-2797ba8f7fbbd0a5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-920c29cdc2911abc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-c1c69ff9e9a2afc3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-3f892e95d5262b63.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-d87d502e6b2ca4ea.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2018-12-19T08:59:45.834Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="学习mssql">
+<meta name="twitter:description" content="第七节：学习mssqlmssql显示注入 判断是否存在注入点  URL: http://219.153.49.228:40864/new_list.asp?id=2     存在注入点，并且可能是个数字型    判断数据库类型   是一个mssql数据库   确定字段数    由此判断存在4个字段   证明方式  采用联合注入   判断回显位置   原来是个字符型，并且在2，3位置回显   获取数">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/11457450-0a1cf02bc92845a4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/12/13/学习mssql/">
+
+
+
+
+
+  <title>学习mssql | ZouKba</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ZouKba</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/13/学习mssql/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zoukba">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZouKba">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">学习mssql</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-13T16:47:52+08:00">
+                2018-12-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="第七节：学习mssql"><a href="#第七节：学习mssql" class="headerlink" title="第七节：学习mssql"></a>第七节：学习mssql</h1><h2 id="mssql显示注入"><a href="#mssql显示注入" class="headerlink" title="mssql显示注入"></a>mssql显示注入</h2><ul>
+<li><p>判断是否存在注入点</p>
+<ul>
+<li><p>URL: <a href="http://219.153.49.228:40864/new_list.asp?id=2" target="_blank" rel="noopener">http://219.153.49.228:40864/new_list.asp?id=2</a></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-0a1cf02bc92845a4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="m1.png"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-1dc67488a92bd9a2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="m2.png"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-6ec442480dec238d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="m3.png"></p>
+</li>
+<li><p>存在注入点，并且可能是个数字型</p>
+</li>
+</ul>
+</li>
+<li><p>判断数据库类型</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-755d22dd29f71d86.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="m4.png"></p>
+<ul>
+<li>是一个mssql数据库</li>
+</ul>
+</li>
+<li><p>确定字段数</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-d969f0e337a6cc59.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="m5.png"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-05bd2c2a8ab82c76.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="m6.png"></p>
+<ul>
+<li>由此判断存在4个字段</li>
+</ul>
+</li>
+<li><p>证明方式</p>
+<ul>
+<li>采用联合注入</li>
+</ul>
+</li>
+<li><p>判断回显位置</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-c55c05995b37d5f7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="m7.png"></p>
+<ul>
+<li>原来是个字符型，并且在2，3位置回显</li>
+</ul>
+</li>
+<li><p>获取数据库名</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-b2276c8962055f3c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="m8.png"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-71616753efda2239.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="m9.png"></p>
+<ul>
+<li><p>发现墨者靶场关键字</p>
+<p>mozhe_db_v2</p>
+</li>
+</ul>
+</li>
+<li><p>获取表名</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-3cfb1728c22f62d9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="m10.png"></p>
+<ul>
+<li>Bingo manage 关键字：manage</li>
+</ul>
+</li>
+<li><p>获取字段名</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-c40c518e2df3b20e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="m11.png"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-57d313fab433ce46.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="m12.png"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-dd137bafa8380f41.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="m13.png"></p>
+<ul>
+<li>获得关键字信息 username,passwd</li>
+</ul>
+</li>
+<li><p>查询信息</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-7d9a1c44d8956320.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="m14.png"></p>
+</li>
+<li><p>小结</p>
+<ul>
+<li>top 1 是输出一项数据</li>
+<li>其特殊表要记牢</li>
+</ul>
+</li>
+</ul>
+<h2 id="mssql安全配置"><a href="#mssql安全配置" class="headerlink" title="mssql安全配置"></a>mssql安全配置</h2><ul>
+<li>见pdf</li>
+</ul>
+<h2 id="access数据库注入"><a href="#access数据库注入" class="headerlink" title="access数据库注入"></a>access数据库注入</h2><ul>
+<li><p>是否存在注入点</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-aec7d765408ac2d2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="a1.png"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-a55f63a61efa2ca2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="a2.png"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-62de5d75272ff79e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="a3.png"></p>
+<ul>
+<li>存在注入，可能为数字型</li>
+</ul>
+</li>
+<li><p>确定数据库类型</p>
+<ul>
+<li><p>由于已知他是个access数据库，那他就是吧</p>
+<p>主要是我注入不进去</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-48652419a03477b2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="a4.png"></p>
+</li>
+<li><p>因为access的特殊数据库的表是web上调用不了的，应该是显示错误</p>
+<p>不知道这个算不算错误</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-b34305b7ce57e6bf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="a5.png"></p>
+</li>
+<li><p>猜了一个admin居然成功了</p>
+</li>
+</ul>
+</li>
+<li><p>确定字段数</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-934060f4698812ef.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="a6.png"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-2797ba8f7fbbd0a5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="a7.png"></p>
+<ul>
+<li>确定字段数为4</li>
+</ul>
+</li>
+<li><p>判断回显位置</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-920c29cdc2911abc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="a8.png"></p>
+<ul>
+<li>确定在2，3回显</li>
+</ul>
+</li>
+<li><p>直接猜字段</p>
+</li>
+<li><p><img src="https://upload-images.jianshu.io/upload_images/11457450-c1c69ff9e9a2afc3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="a9.png"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-3f892e95d5262b63.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="a10.png"></p>
+<ul>
+<li>获得敏感字段 username，passwd</li>
+</ul>
+</li>
+<li><p>获取信息</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-d87d502e6b2ca4ea.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="a11.png"></p>
+</li>
+</ul>
+<h2 id="sql注入绕过"><a href="#sql注入绕过" class="headerlink" title="sql注入绕过"></a>sql注入绕过</h2><ul>
+<li><p>后台查询语句基本类似如下：</p>
+<p>select * from 数据库 where username=’UserName’ and password=’Password ‘</p>
+<p>构造语句后：</p>
+<p>select * from 数据库 where username=’admin’–+’ and password=’Password ‘</p>
+<p>–+直接注释了后面的语句，查询语句变成</p>
+<p>select * from 数据库 where username=’admin’</p>
+</li>
+</ul>
+<p>  万能密码的作用并不是输入在密码的位置，而是通过用户名去注释掉后面的验证</p>
+<p>  需要针对不同的网页，数据类型payload不同的密码</p>
+<ul>
+<li>‘ or 1=1#             //这是首选 先闭合，‘#’注释掉后面的语句</li>
+</ul>
+<p>  admin’ or 1=’1     </p>
+<p>  admin’ and 1=1#    //因表里存在admin所以可行</p>
+<p>  ‘ or 1#  </p>
+<p>  admin’ or ‘’=’       //因表里存在admin所以可行</p>
+<p>  admin’#               //因表里存在admin所以可行</p>
+<p>  admin’ or ‘a’=’a</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><ul>
+<li><p><strong>Don’t part with your illusions. When they are gone, you may still exist. But you have ceased to live.</strong></p>
+<p>不要放弃你的幻想。当幻想没有了以后，你还可以生存，但是你虽生犹死。</p>
+</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/12/12/注入实战/" rel="next" title="注入实战">
+                <i class="fa fa-chevron-left"></i> 注入实战
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/12/14/学习iis系统/" rel="prev" title="学习iis系统">
+                学习iis系统 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">zoukba</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#第七节：学习mssql"><span class="nav-number">1.</span> <span class="nav-text">第七节：学习mssql</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#mssql显示注入"><span class="nav-number">1.1.</span> <span class="nav-text">mssql显示注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mssql安全配置"><span class="nav-number">1.2.</span> <span class="nav-text">mssql安全配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#access数据库注入"><span class="nav-number">1.3.</span> <span class="nav-text">access数据库注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sql注入绕过"><span class="nav-number">1.4.</span> <span class="nav-text">sql注入绕过</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#小结"><span class="nav-number">1.5.</span> <span class="nav-text">小结</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zoukba</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
